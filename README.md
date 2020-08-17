@@ -2,7 +2,7 @@
 
 A visually appealing currency converter with 170+ currencies that gets the job done with offline support and no ads
 
-![gif](docs/OPyS7sP.gif)
+![gif](images/OPyS7sP.gif)
 
 # Building
 You need to obtain your own api key from openexchangerates.org and create a new file in lib/ called key.dart and add the following line into the file
