@@ -12,3 +12,14 @@ const inputDecoration = InputDecoration(
     borderSide: BorderSide(color: Colors.transparent),
   ),
 );
+
+const searchDecoration = InputDecoration(
+  hintText: 'Search currencies',
+//  hintStyle: TextStyle(color: Colors.lightBlue.shade100),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.transparent ),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.transparent),
+  ),
+);
