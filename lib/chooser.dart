@@ -68,7 +68,7 @@ class _chooserState extends State<chooser> {
           children: [DraggableScrollbar.arrows(
             initialScrollOffset: MediaQuery.of(context).size.height * widget.offset / items.length,
             labelTextBuilder: (double offset) {
-              return Text(offset~/200 < items.keys.toList().length ? items.keys.toList()[offset~/200] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
+              return Text(offset~/150 < items.keys.toList().length ? items.keys.toList()[offset~/150] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
             },
             backgroundColor: Colors.lightBlue,
             controller: _controller,
@@ -76,7 +76,7 @@ class _chooserState extends State<chooser> {
 //            onSelectedItemChanged: (_) => print('huhu?'),
               controller: _controller,
 //          perspective: 0.001,
-              itemExtent: 200,
+              itemExtent: 150,
 //        useMagnifier: true,
 //            diameterRatio: 1.4,
 //            magnification: 1,
@@ -95,7 +95,8 @@ class _chooserState extends State<chooser> {
 //                    payload.add(widget.from);
 //                    payload.add(widget.names.keys.toList()[index]);
                           payload.add(index);
-                          Navigator.pop(context, index);
+                          int actualIndex = widget.names.keys.toList().indexOf(items.keys.toList()[index]);
+                          Navigator.pop(context, actualIndex);
                         },
                         child: Container(
                             decoration: BoxDecoration(
@@ -147,7 +148,7 @@ class _chooserState extends State<chooser> {
                   margin: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                   child: TextField(
                     style: TextStyle(fontSize: 15, color: Theme.of(context).accentColor),
-                    decoration: searchDecoration.copyWith(hintStyle: TextStyle(color: Theme.of(context).accentColor.withOpacity(0.3))),
+                    decoration: searchDecoration.copyWith(hintStyle: TextStyle(color: Theme.of(context).accentColor.withOpacity(0.5))),
                     onChanged: (val){
                       filterSearchResults(val.toLowerCase());
                     },
