@@ -16,7 +16,8 @@ class chooser extends StatefulWidget {
 
 class _chooserState extends State<chooser> {
 //  ScrollController _controller = new ScrollController(initialScrollOffset: widget.offset);
-  double position = 10001;
+  double extent = 150;
+  double screenHeight;
   List payload = List();
   Map items;
 
@@ -31,9 +32,9 @@ class _chooserState extends State<chooser> {
 //      });
       items = new Map();
       widget.names.forEach((key, value) {
-        print("$key and $value");
+//        print("$key and $value");
         if(key.toString().toLowerCase().contains(query) || value.toString().toLowerCase().contains(query) || widget.symbols[key].toString().toLowerCase().contains(query)){
-          print("$query and $key and $value");
+//          print("$query and $key and $value");
           try {
             items.putIfAbsent(key, () => value);
           }catch(e){
@@ -55,20 +56,32 @@ class _chooserState extends State<chooser> {
   void initState() {
     super.initState();
     items = widget.names;
+//    screenHeight = MediaQuery.of(context).size.height;
   }
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _controller = new ScrollController(initialScrollOffset: (widget.offset * 200) - (MediaQuery.of(context).size.height/2) + 100 > 0 ? (widget.offset * 200) - (MediaQuery.of(context).size.height/2) + 100 : 0);
+    ScrollController _controller = new ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if((widget.offset * extent) - (MediaQuery.of(context).size.height/2) + (extent/2) < 0){
+        _controller.jumpTo(0);
+      }else if((widget.offset * extent) - (MediaQuery.of(context).size.height/2) + (extent/2) > _controller.position.maxScrollExtent) {
+        _controller.jumpTo(_controller.position.maxScrollExtent);
+      }else{
+        _controller.jumpTo((widget.offset * extent) - (MediaQuery.of(context).size.height/2) + (extent/2));
+      }
+    });
+
     // =  widget.offset != null ? 0 : widget.offset;
 //    print(_controller.offset);
 //    position = _controller.offset;
+    print(MediaQuery.of(context).size.height * widget.offset / items.length);
     return Scaffold(
       body: Stack(
           children: [DraggableScrollbar.arrows(
-            initialScrollOffset: MediaQuery.of(context).size.height * widget.offset / items.length,
+//            initialScrollOffset: MediaQuery.of(context).size.height * widget.offset / items.length,
             labelTextBuilder: (double offset) {
-              return Text(offset~/150 < items.keys.toList().length ? items.keys.toList()[offset~/150] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
+              return Text(offset~/extent < items.keys.toList().length ? items.keys.toList()[offset~/extent] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
             },
             backgroundColor: Colors.lightBlue,
             controller: _controller,
@@ -76,7 +89,7 @@ class _chooserState extends State<chooser> {
 //            onSelectedItemChanged: (_) => print('huhu?'),
               controller: _controller,
 //          perspective: 0.001,
-              itemExtent: 150,
+              itemExtent: extent,
 //        useMagnifier: true,
 //            diameterRatio: 1.4,
 //            magnification: 1,
@@ -96,6 +109,8 @@ class _chooserState extends State<chooser> {
 //                    payload.add(widget.names.keys.toList()[index]);
                           payload.add(index);
                           int actualIndex = widget.names.keys.toList().indexOf(items.keys.toList()[index]);
+                          print(_controller.offset);
+                          print(MediaQuery.of(context).size.height);
                           Navigator.pop(context, actualIndex);
                         },
                         child: Container(
@@ -103,20 +118,38 @@ class _chooserState extends State<chooser> {
                               borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               color: Theme.of(context).primaryColor.withOpacity(0.8),
                             ),
-                            child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${items.keys.toList()[index]} (${widget.symbols[items.keys.toList()[index]]})',
-                                      style: chooserStyle.copyWith(fontSize: 25),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${items.keys.toList()[index]} (${widget.symbols[items.keys.toList()[index]]})',
+                                        style: chooserStyle.copyWith(fontSize: 25),
+                                      ),
+                                      Text(
+                                        items.values.toList()[index],
+                                        style: chooserStyle,
+                                      ),
+                                    ],
+                                  )),
+                                Align(
+                                  alignment: Alignment(1,1),
+                                  child: Container(
+                                    margin: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      borderRadius:  BorderRadius.circular(70),
+                                      color: Colors.white,
                                     ),
-                                    Text(
-                                      items.values.toList()[index],
-                                      style: chooserStyle,
+                                    child: IconButton(
+                                      icon: Icon(Icons.favorite_border, color: Theme.of(context).accentColor,),
+                                      onPressed: (){},
                                     ),
-                                  ],
-                                ))),
+                                  ),
+                                )
+                        ]
+                            )),
                       ),
                     ),
                   ),
@@ -145,13 +178,17 @@ class _chooserState extends State<chooser> {
                       side: BorderSide(width: 1, color: Colors.black.withOpacity(0.2))
                   ),
                   elevation: 0,
-                  margin: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                  child: TextField(
-                    style: TextStyle(fontSize: 15, color: Theme.of(context).accentColor),
-                    decoration: searchDecoration.copyWith(hintStyle: TextStyle(color: Theme.of(context).accentColor.withOpacity(0.5))),
-                    onChanged: (val){
-                      filterSearchResults(val.toLowerCase());
-                    },
+                  margin: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height*0.005,
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, color: Theme.of(context).accentColor),
+                      decoration: searchDecoration.copyWith(hintStyle: TextStyle(color: Theme.of(context).accentColor.withOpacity(0.5))),
+                      onChanged: (val){
+                        filterSearchResults(val.toLowerCase());
+                      },
+                    ),
                   ),
                 ),
               ),
