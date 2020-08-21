@@ -109,12 +109,6 @@ class _chooserState extends State<chooser> with TickerProviderStateMixin {
     super.initState();
     items = widget.names;
     loadFav();
-//    _controller2 = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
-    for (var item in items.keys){
-      controllers.add(AnimationController(duration: const Duration(milliseconds: 200), vsync: this));
-    }
-//    _controller2.forward();
-    _animatedWidget = searchButton();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if((widget.offset * extent) - (MediaQuery.of(context).size.height/2) + (extent/2) < 0){
         _controller.jumpTo(0);
@@ -124,11 +118,19 @@ class _chooserState extends State<chooser> with TickerProviderStateMixin {
         _controller.jumpTo((widget.offset * extent) - (MediaQuery.of(context).size.height/2) + (extent/2));
       }
     });
+//    _controller2 = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    for (var item in items.keys){
+      controllers.add(AnimationController(duration: const Duration(milliseconds: 200), vsync: this));
+    }
+//    _controller2.forward();
+    _animatedWidget = searchButton();
+
 //    screenHeight = MediaQuery.of(context).size.height;
   }
 
   @override
   Widget build(BuildContext context) {
+
 
 
     // =  widget.offset != null ? 0 : widget.offset;
@@ -150,116 +152,101 @@ class _chooserState extends State<chooser> with TickerProviderStateMixin {
 //        ),
 //      ),
       body: Stack(
-          children: [Column(
-            children: [
-//              Expanded(
-//                  flex: 1,
-//                  child: SafeArea(
-//                    child: Row(
-//                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                      children: favourited(),
-//                    )
-//                  )
-//              ),
-//              Divider(
-//                color: Theme.of(context).accentColor,
-//                thickness: 2,
-//              ),
-              Expanded(
-                flex: 10,
-                child: DraggableScrollbar.arrows(
+          children: [DraggableScrollbar.arrows(
 //            initialScrollOffset: MediaQuery.of(context).size.height * widget.offset / items.length,
-                  labelTextBuilder: (double offset) {
-                    return Text(offset~/extent < items.keys.toList().length ? items.keys.toList()[offset~/extent] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
-                  },
-                  backgroundColor: Colors.lightBlue,
-                  controller: _controller,
-                  child: ListView(
+            labelTextBuilder: (double offset) {
+              return Text(offset~/extent < items.keys.toList().length ? items.keys.toList()[offset~/extent] : items.keys.toList()[items.keys.toList().length-1], style: TextStyle(color: Colors.white),);
+            },
+            backgroundColor: Colors.lightBlue,
+            controller: _controller,
+            child: ListView(
 //            onSelectedItemChanged: (_) => print('huhu?'),
-                    controller: _controller,
+              controller: _controller,
 //          perspective: 0.001,
-                    itemExtent: extent,
+              itemExtent: extent,
 //        useMagnifier: true,
 //            diameterRatio: 1.4,
 //            magnification: 1,
-                    children:
-                    List.generate(items.keys.length, (int index){
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Hero(
-                          tag: items.keys.toList()[index],
-                          child: Material(
-                            child: InkWell(
-                              splashColor: Theme.of(context).accentColor,
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              children:
+              List.generate(fav.isNotEmpty ? items.keys.length+1 : items.keys.length, (int index){
+                return index == items.keys.length ?
+                Container()
+                :Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+                  child: Hero(
+                    tag: items.keys.toList()[index],
+                    child: Material(
+                      child: InkWell(
+                        splashColor: Theme.of(context).accentColor,
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
 //                    onTap: ()=> Navigator.pop(context, item),
-                              onTap: () {
+                        onTap: () {
 //                    payload.add(widget.from);
 //                    payload.add(widget.names.keys.toList()[index]);
-                                payload.add(index);
-                                int actualIndex = widget.names.keys.toList().indexOf(items.keys.toList()[index]);
-                                print(_controller.offset);
-                                print(MediaQuery.of(context).size.height);
-                                Navigator.pop(context, actualIndex);
-                              },
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                    color: Theme.of(context).primaryColor.withOpacity(0.8),
-                                  ),
-                                  child: Stack(
+                          payload.add(index);
+                          int actualIndex = widget.names.keys.toList().indexOf(items.keys.toList()[index]);
+                          print(_controller.offset);
+                          print(MediaQuery.of(context).size.height);
+                          Navigator.pop(context, actualIndex);
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              color: Theme.of(context).primaryColor.withOpacity(0.8),
+                            ),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '${items.keys.toList()[index]} (${widget.symbols[items.keys.toList()[index]]})',
-                                              style: chooserStyle.copyWith(fontSize: 25),
-                                            ),
-                                            Text(
-                                              items.values.toList()[index],
-                                              style: chooserStyle,
-                                            ),
-                                          ],
-                                        )),
-                                      Align(
-                                        alignment: Alignment(1,1),
-                                        child: ScaleTransition(
-                                          scale: _tween.animate(CurvedAnimation(parent: controllers[index], curve: Curves.easeInOutCubic)),
+                                      Text(
+                                        '${items.keys.toList()[index]} (${widget.symbols[items.keys.toList()[index]]})',
+                                        style: chooserStyle.copyWith(fontSize: 25),
+                                      ),
+                                      Text(
+                                        items.values.toList()[index],
+                                        style: chooserStyle,
+                                      ),
+                                    ],
+                                  )),
+                                Align(
+                                  alignment: Alignment(1,1),
+                                  child: ScaleTransition(
+                                    scale: _tween.animate(CurvedAnimation(parent: controllers[index], curve: Curves.easeInOutCubic)),
 //                                          alignment: Alignment.center,
-                                          child: IconButton(
-                                            icon: Icon(fav.contains(items.keys.toList()[index]) ? Icons.favorite : Icons.favorite_border, color: Theme.of(context).accentColor,),
-                                            onPressed: ()async{
-                                              var prefs = await SharedPreferences.getInstance();
-                                              if(!fav.contains(items.keys.toList()[index]) && fav.length < 4){
-                                                controllers[index].forward().then((value) => controllers[index].reverse());
-                                                setState(() {
-                                                  fav.add(items.keys.toList()[index]);
-                                                  prefs.setStringList('fav', fav);
-                                                });
-                                              }else if(fav.contains(items.keys.toList()[index])){
-                                                controllers[index].forward().then((value) => controllers[index].reverse());
-                                                setState(() {
-                                                  fav.remove(items.keys.toList()[index]);
-                                                  prefs.setStringList('fav', fav);
-                                                });
-                                              }else if(fav.length > 3){
-                                                _showSnack(context, 'Favourites slot is full!');
-                                              }
+                                    child: IconButton(
+                                      icon: Icon(fav.contains(items.keys.toList()[index]) ? Icons.favorite : Icons.favorite_border, color: Theme.of(context).accentColor,),
+                                      onPressed: ()async{
+                                        var prefs = await SharedPreferences.getInstance();
+                                        if(!fav.contains(items.keys.toList()[index]) && fav.length < 4){
+                                          controllers[index].forward().then((value) => controllers[index].reverse());
+                                          setState(() {
+                                            fav.add(items.keys.toList()[index]);
+                                            prefs.setStringList('fav', fav);
+                                          });
+                                        }else if(fav.contains(items.keys.toList()[index])){
+                                          controllers[index].forward().then((value) => controllers[index].reverse());
+                                          setState(() {
+                                            fav.remove(items.keys.toList()[index]);
+                                            prefs.setStringList('fav', fav);
+                                          });
+                                        }else if(fav.length > 3){
+                                          _showSnack(context, 'Favourites slot is full!');
+                                        }
 //                                            setState(() {
 //
 //                                            });
-                                            },
-                                          ),
-                                        ),
-                                      )
-                              ]
-                                  )),
-                            ),
-                          ),
-                        ),
-                      );
+                                      },
+                                    ),
+                                  ),
+                                )
+                        ]
+                            )),
+                      ),
+                    ),
+                  ),
+                );
 //            ...widget.currencies.map((dynamic name) {
 //              return Padding(
 //                padding: EdgeInsets.symmetric(horizontal: 10),
@@ -268,11 +255,8 @@ class _chooserState extends State<chooser> with TickerProviderStateMixin {
 //                    child: Center(child: Text(name, style: chooserStyle,))),
 //              );
 //            })
-                    }),
-                  ),
-                ),
-              ),
-            ],
+              }),
+            ),
           ),
             Align(
               alignment: Alignment(0,0.95),
