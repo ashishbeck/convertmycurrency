@@ -163,7 +163,7 @@ class _homePageState extends State<homePage> {
       content: Text('$text', style: TextStyle(color: Theme.of(context).accentColor),),
       duration: Duration(seconds: 5),
       backgroundColor: Colors.white,
-      behavior: SnackBarBehavior.floating,
+//      behavior: SnackBarBehavior.floating,
       action: showAction == true ? SnackBarAction(
         label: actionText,
         onPressed: ()async{
