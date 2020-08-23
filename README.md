@@ -3,6 +3,7 @@
 A visually appealing currency converter with 170+ currencies that gets the job done with offline support and no ads.
 This project was made in Flutter for both iOS and Android.
 
+# Screenshots
 ![gif](images/screen.gif)
 |![gif](images/SS2.jpg)|![gif](images/SS1.jpg)|![gif](images/SS3.jpg)|
 | ------------- |:-------------:| -----:|
